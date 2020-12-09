@@ -11,6 +11,7 @@ const isProd = !isDev;
 
 const optimization = () => {
 	const config = { 
+		//вывод  одинаковых элементов в файл(чтобы не было повторений)
 		splitChunks: {
 			chunks: 'all'
 		}
@@ -23,7 +24,9 @@ const optimization = () => {
 	}
 	return config;
 }
-console.log('IS DEV:', optimization);
+//убираем из имени хэш при продакшене
+const filename = ext => isDev ? `[name].${ext}` : `[name].[hash].${ext}`;
+//console.log('IS DEV:', optimization());
 
 module.exports = {
 	context: path.resolve(__dirname, 'src'),//задаем путь для проекта, относительно которого будут строится остальные пути
@@ -35,7 +38,7 @@ module.exports = {
 	},
 	output: {
 		//выходной файл(ы)
-		filename: '[name].[contenthash].js',
+		filename: filename('js'),
 		path: path.resolve(__dirname, 'dist')
 	},
 	resolve: {
@@ -45,10 +48,13 @@ module.exports = {
 			'@': path.resolve(__dirname, 'src'),
 		}
 	},
-	optimization: { 
+	optimization: optimization(),
+	/* { 
 		splitChunks: {
 			chunks: 'all'
-		},
+		}	
+	},  */
+		
 	devServer: {
 		port: 4300,
 		hot: isDev,
@@ -73,7 +79,7 @@ module.exports = {
 			]	
 		}),
 		new MiniCssExtractPlugin({
-			filename: '[name].[contenthash].css'
+			filename: filename('css')
 		})
 	],
 	module: {
@@ -87,7 +93,8 @@ module.exports = {
 							publicPath: ''
 						},
 					},
-					'css-loader'
+					'css-loader',
+					'less-loader'
 				]
 			},
 			{
