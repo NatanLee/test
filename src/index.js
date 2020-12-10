@@ -6,6 +6,7 @@ import csv from './assets/data.csv';
 import WebpackLogo from '@/assets/social-network.png';
 import '@/styles/styles.css';
 import '@/styles/less.less';
+import '@/styles/sass.sass';
 
 const post = new Post('Webpack Post Title', WebpackLogo);
 

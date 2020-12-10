@@ -25,7 +25,7 @@ const optimization = () => {
 	return config;
 }
 //убираем из имени хэш при продакшене
-const filename = ext => isDev ? `[name].${ext}` : `[name].[hash].${ext}`;
+const filename = ext => isDev ? `[name].${ext}` : `[name].[fullhash].${ext}`;
 //console.log('IS DEV:', optimization());
 
 module.exports = {
@@ -85,7 +85,7 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.css$/,
+				test: /\.(css|less)$/,
 				use: [
 					{
 						loader: MiniCssExtractPlugin.loader,
@@ -95,6 +95,19 @@ module.exports = {
 					},
 					'css-loader',
 					'less-loader'
+				]
+			},
+			{
+				test: /\.(s[ac]ss)$/i,
+				use: [
+					{
+						loader: MiniCssExtractPlugin.loader,
+						options: {
+							publicPath: ''
+						},
+					},
+					'css-loader',
+					'sass-loader'
 				]
 			},
 			{
