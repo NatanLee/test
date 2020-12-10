@@ -10,6 +10,7 @@
     "start": "cross-env NODE_ENV=development webpack serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "browserslist": "> 0.25%, not dead",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/NatanLee/test.git"
@@ -21,6 +22,11 @@
   },
   "homepage": "https://github.com/NatanLee/test#readme",
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/preset-env": "^7.12.10",
+    "@babel/preset-typescript": "^7.12.7",
+    "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.4.0",
     "cross-env": "^7.0.3",
@@ -44,6 +50,7 @@
     "xml-loader": "^1.2.1"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "jquery": "^3.5.1",
     "normalize.css": "^8.0.1"
   }

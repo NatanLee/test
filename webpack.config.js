@@ -26,15 +26,31 @@ const optimization = () => {
 }
 //убираем из имени хэш при продакшене
 const filename = ext => isDev ? `[name].${ext}` : `[name].[fullhash].${ext}`;
-//console.log('IS DEV:', optimization());
+//
+const cssLoaders = (extra) => {
+	const loaders = [
+		{
+			loader: MiniCssExtractPlugin.loader,
+			options: {
+				publicPath: ''
+			},
+		},
+		'css-loader'		
+	];
+	if(extra){
+		loaders.push(extra);
+	}
+	return loaders;
+}
+
 
 module.exports = {
 	context: path.resolve(__dirname, 'src'),//задаем путь для проекта, относительно которого будут строится остальные пути
 	mode: 'development',
 	entry: {
 		//точки для входа и пострения файлов
-		main: './index.js',
-		analytics: './analytics.js'
+		main: ['@babel/polyfill', './index.js'],
+		analytics: './analytics.ts'
 	},
 	output: {
 		//выходной файл(ы)
@@ -86,29 +102,11 @@ module.exports = {
 		rules: [
 			{
 				test: /\.(css|less)$/,
-				use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							publicPath: ''
-						},
-					},
-					'css-loader',
-					'less-loader'
-				]
+				use: cssLoaders('less-loader')
 			},
 			{
 				test: /\.(s[ac]ss)$/i,
-				use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							publicPath: ''
-						},
-					},
-					'css-loader',
-					'sass-loader'
-				]
+				use: cssLoaders('sass-loader')
 			},
 			{
 				test: /\.(png|jpg|svg|gif)$/,
@@ -125,6 +123,35 @@ module.exports = {
 			{
 				test: /\.csv$/,
 				use: ['csv-loader']
+			},
+			{
+				test: /\.m?js$/,
+				exclude: /node_modules/,
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: ['@babel/preset-env'],
+						plugins: [
+							'@babel/plugin-proposal-class-properties'
+						]
+					}
+				}
+			},
+			//typeScript
+			{
+				test: /\.ts$/,
+				exclude: /node_modules/,
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: [
+							'@babel/preset-env',
+							'@babel/preset-typescript'],
+						plugins: [
+							'@babel/plugin-proposal-class-properties'
+						]
+					}
+				}
 			}						
 		]
 	}
