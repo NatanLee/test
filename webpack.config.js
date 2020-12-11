@@ -59,13 +59,27 @@ const babelOptions = preset => {
 	
 	return opts;
 } 
+//только для eslint 
+const jsLoaders = () => {
+	const loaders = [{
+		loader: 'babel-loader',
+		options: babelOptions()
+	}];
+	
+	if (isDev){
+		loaders.push('eslint-loader');
+	}
+	
+	return loaders;
+	
+}
 
 module.exports = {
 	context: path.resolve(__dirname, 'src'),//задаем путь для проекта, относительно которого будут строится остальные пути
 	mode: 'development',
 	entry: {
 		//точки для входа и пострения файлов
-		main: ['@babel/polyfill', './index.js'],
+		main: ['@babel/polyfill', './index.jsx'],
 		analytics: './analytics.ts'
 	},
 	output: {
@@ -80,19 +94,15 @@ module.exports = {
 			'@': path.resolve(__dirname, 'src'),
 		}
 	},
-	optimization: optimization(),
-	/* { 
-		splitChunks: {
-			chunks: 'all'
-		}	
-	},  */
-		
+	optimization: optimization(),	
 	devServer: {
 		port: 4300,
 		hot: isDev,
 		overlay: true,
 		open: true
 	},
+	//выдает ошибку в режиме build
+	/* devtool: isDev ? 'source-map' : '', */
 	plugins: [
 		new HTMLWebpackPlugin({
 			//title: 'gogogo',
@@ -140,13 +150,20 @@ module.exports = {
 				test: /\.csv$/,
 				use: ['csv-loader']
 			},
-			{
+			//loader без eslint
+			/* {
 				test: /\.m?js$/,
 				exclude: /node_modules/,
 				use: {
 					loader: 'babel-loader',
 					options: babelOptions()
 				}
+			}, */
+			//loader с eslint
+			{
+				test: /\.m?js$/,
+				exclude: /node_modules/,
+				use: jsLoaders()
 			},
 			//typeScript
 			{

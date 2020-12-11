@@ -3,6 +3,8 @@ async function start(){
 }
 start().then(console.log);
 
+const unused = 11;
+
 class Util {
 	static id = Date.now();	
 }
