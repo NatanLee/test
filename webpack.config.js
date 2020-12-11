@@ -5,6 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserWebpackPlugin = require("terser-webpack-plugin");
+const WebpackBundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = !isDev;
@@ -70,9 +71,39 @@ const jsLoaders = () => {
 		loaders.push('eslint-loader');
 	}
 	
-	return loaders;
-	
+	return loaders;	
 }
+
+const plugins = () => {
+	const base = [
+		new HTMLWebpackPlugin({
+			//title: 'gogogo',
+			template: './index.html',//шаблон страницы
+			minify: {
+				collapseWhitespace: isProd
+			}
+		}),
+		new CleanWebpackPlugin(),
+		new CopyWebpackPlugin({
+			patterns: [
+				{
+				from: path.resolve(__dirname, 'src/favicon.ico'),
+				to: path.resolve(__dirname, 'dist')
+				}
+			]	
+		}),
+		new MiniCssExtractPlugin({
+			filename: filename('css')
+		})
+	];
+	
+	if(isProd){
+		base.push(new WebpackBundleAnalyzer())
+	}
+	
+	return base;
+}
+
 
 module.exports = {
 	context: path.resolve(__dirname, 'src'),//задаем путь для проекта, относительно которого будут строится остальные пути
@@ -103,27 +134,7 @@ module.exports = {
 	},
 	//выдает ошибку в режиме build
 	/* devtool: isDev ? 'source-map' : '', */
-	plugins: [
-		new HTMLWebpackPlugin({
-			//title: 'gogogo',
-			template: './index.html',//шаблон страницы
-			minify: {
-				collapseWhitespace: isProd
-			}
-		}),
-		new CleanWebpackPlugin(),
-		new CopyWebpackPlugin({
-			patterns: [
-				{
-				from: path.resolve(__dirname, 'src/favicon.ico'),
-				to: path.resolve(__dirname, 'dist')
-				}
-			]	
-		}),
-		new MiniCssExtractPlugin({
-			filename: filename('css')
-		})
-	],
+	plugins: plugins(),
 	module: {
 		rules: [
 			{
